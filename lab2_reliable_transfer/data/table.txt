@@ -1,0 +1,15 @@
+rockhopper-09 3001 rockhopper-09 4001 rockhopper-09 4001 200 15
+rockhopper-09 3001 rockhopper-09 4002 rockhopper-09 3002 0 0
+rockhopper-09 3001 rockhopper-09 5001 rockhopper-09 5001 0 0
+rockhopper-09 3001 rockhopper-09 5002 rockhopper-09 5002 0 0
+rockhopper-09 3001 rockhopper-09 5003 rockhopper-09 3002 0 0
+rockhopper-09 3002 rockhopper-09 4001 rockhopper-09 4001 0 0
+rockhopper-09 3002 rockhopper-09 4002 rockhopper-09 3003 0 0
+rockhopper-09 3002 rockhopper-09 5001 rockhopper-09 3001 0 0
+rockhopper-09 3002 rockhopper-09 5002 rockhopper-09 3001 0 0
+rockhopper-09 3002 rockhopper-09 5003 rockhopper-09 3003 0 0
+rockhopper-09 3003 rockhopper-09 4001 rockhopper-09 3002 0 0
+rockhopper-09 3003 rockhopper-09 4002 rockhopper-09 4002 0 0
+rockhopper-09 3003 rockhopper-09 5001 rockhopper-09 3002 0 0
+rockhopper-09 3003 rockhopper-09 5002 rockhopper-09 3002 0 0
+rockhopper-09 3003 rockhopper-09 5003 rockhopper-09 5003 0 0
