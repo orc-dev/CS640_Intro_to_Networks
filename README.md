@@ -1,4 +1,4 @@
-## Lab Projects in CS 640: Intro to Computer Networks
+# Lab Projects in CS 640: Intro to Computer Networks
 This repo contains two selected projects in CS 640.
 
 #### Lab2: Reliable Transfer
