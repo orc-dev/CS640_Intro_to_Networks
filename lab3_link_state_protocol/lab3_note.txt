@@ -1,0 +1,120 @@
+Project 3: Link State Routing
+
+emulator
+├── readtopology
+│   ├── read file topology.txt
+│   └── ..
+│ 
+├── createroutes 
+│   ├── implement a link-state routing protocol
+│   ├── set up a shortest path forwarding table between nodes
+│   └── keep
+│       ├── route topology (keep updating)
+│       ├── forwarding table (keep updating)
+│       ├── latest timestamp `HelloMessage`
+│       └── largest seq_no `LinkStateMessage`
+│ 
+├── forwardpacket
+│   
+└── buildForwardTable
+
+Submission
+- Lab3.zip
+
+
+==========================
+Packet Type and Formatting
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Field    │ priority │ src_ipv4 │ src_port │ des_ipv4 │ des_port │ udp_lenB ││ p_type │ seq_no │ msg_lenB  │ payload 
+Bytes    │     1    │    4     │     2    │    4     │     2    │     4    ││    1   │    4   │     4     │    ?
+─────────│──────────────────────────────────────────────────────────────────────────────────────────────────────────
+HELLO    │     0    │ src_ipv4 │ src_port │ src_ipv4 │ src_port │    len   ││  b'H'  │    0   │     0     │ bytes() 
+LSA      │     0    │ src_ipv4 │ src_port │ src_ipv4 │ src_port │    TTL   ││  b'L   │ seq_no │link_state │ bytes() 
+TRACE    │     0    │ src_ipv4 │ src_port │ des_ipv4 │ des_port │    TTL   ││  b'T'  |    0   │     0     │ bytes()  
+---------│----------------------------------------------------------------------------------------------------------
+REQUEST  │     1    │ src_ipv4 │ src_port │ des_ipv4 │ des_port │    len   ││  b'R'  │    0   │window_size│ filename
+DATA     │     ?    │ src_ipv4 │ src_port │ des_ipv4 │ des_port │    len   ││  b'D'  │    +   │    len    │ chunk 
+ACK      │     1    │ src_ipv4 │ src_port │ des_ipv4 │ des_port │    len   ││  b'A'  │    ?   │     0     │ bytes() 
+END      │     ?    │ src_ipv4 │ src_port │ des_ipv4 │ des_port │    len   ││  b'E'  │    +   │     0     │ bytes() 
+---------+----------------------------------------------------------------------------------------------------------
+important note:
+    * for LSA, its des_ipv4 is the flooding sender's address, each src will change
+
+
+# Test topology
+
+1. topo1.txt
+#                                                 #
+#    0 ----- 1 ----- 2 ----- 3 ----- 4 ----- 5    #
+#    |               |                       |    #
+#   S_8              |                      R_7   #
+#                    6 --- S_9                    #
+
+$,3000 $,3001 $,5008 
+$,3001 $,3000 $,3002
+$,3002 $,3001 $,3006 $,3003
+$,3003 $,3002 $,3004
+$,3004 $,3003 $,3005
+$,3005 $,3004 $,4007 
+$,3006 $,3002 $,5009 
+$,4007 $,3005 
+$,5008 $,3000 
+$,5009 $,3006 
+
+2. topo2.txt
+#                                 #
+#       R_7                       #
+#        |                        #
+#        1 ----- 2                #
+#      /   \   /   \              #
+#    6       0       3 --- S_9    #
+#      \   /       /              #
+#        5 ----- 4                #
+#                |                #
+#               S_8               #
+
+$,3000 $,3001 $,3002 $,3005
+$,3001 $,3002 $,3006 $,3000 $,4007 
+$,3002 $,3001 $,3003 $,3000
+$,3003 $,3002 $,3004 $,5009 
+$,3004 $,3003 $,3005 $,5008 
+$,3005 $,3004 $,3006 $,3000
+$,3006 $,3001 $,3005
+$,4007 $,3001 
+$,5008 $,3004 
+$,5009 $,3003 
+
+
+3. topo3.txt
+#                                                 #
+#    +---------- 5 ----------+                    #
+#    |                       |                    #
+#    0 ----- 1 ----- 2 ----- 3 ----- 4 --- R_7    #
+#    |       |       |               |            #
+#   S_8     S_9      +------ 6 ------+            #
+
+$,3000 $,3001 $,3005 $,5008 
+$,3001 $,3000 $,3002 $,5009 
+$,3002 $,3001 $,3003 $,3006
+$,3003 $,3002 $,3004 $,3005
+$,3004 $,3003 $,3006 $,4007 
+$,3005 $,3000 $,3003 
+$,3006 $,3002 $,3004 
+$,4007 $,3004 
+$,5008 $,3000 
+$,5009 $,3001 
+
+
+DEBUG LOG:
+Nov.23 How a "newly_emerged_node" knows the whole states about the network?
+solution: 
+    - "newly_emerged_node" sends its local LSA with seq_no=0
+    - every node who receives an LSA_packet with seq_no=0 do a local LSA flood 
+
+Nov.25 Infinite-loop flood bug on Topo-2
+solution:
+    - in `process_lsa_packet()`
+    - do reset condition refines:
+        - from `if seq_no == 0`
+        - to   `if seq_no == 0 and local_copy.seq_no != 0:`
+    
