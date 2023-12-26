@@ -1,3 +1,19 @@
+"""
+File Name:    sender.py
+Author:       Xin Cai
+Email:        xcai72@wisc.edu
+Date:         Nov.7 2023
+
+Description:  This auxiliary program updates the data files with the hostname 
+              of the current CS machine, facilitating testing purposes.
+
+command:      python3 utils.py
+
+Course:       CS 640
+Instructor:   Prof. Paul Barford
+Assignment:   2. Network Emulator and Reliable Transfer
+Due Date:     Nov.17 2023
+"""
 import socket
 
 def print_file(file_path):
@@ -27,7 +43,6 @@ def refresh_table_file(filename):
 
 
 def refresh_tracker_file(filename):
-
     HOST_NAME = socket.gethostname()
     buffer = []
 
@@ -41,7 +56,7 @@ def refresh_tracker_file(filename):
         for record in buffer:
             file.write(' '.join(record) + '\n')
 
-# python3 utils.py
+
 def main():
     # refresh table file with current host name
     path_table = 'data/table.txt'
